@@ -1,0 +1,24 @@
+{
+  "Version": 1,
+  "Hash": "c4l/DwbOHj9kbSWzL4S12fa9Od/2W2xbbWYqxaj/w88=",
+  "Source": "WebApp.Server",
+  "BasePath": "_content/WebApp.Server",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [
+    {
+      "Identity": "C:\\Users\\D.Naddei\\Desktop\\WebApp\\webapp.client\\webapp.client.esproj",
+      "Version": 2,
+      "Source": "webapp.client",
+      "GetPublishAssetsTargets": "GetCurrentProjectPublishStaticWebAssetItems",
+      "AdditionalPublishProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalPublishPropertiesToRemove": "WebPublishProfileFile;TargetFramework",
+      "GetBuildAssetsTargets": "GetCurrentProjectBuildStaticWebAssetItems",
+      "AdditionalBuildProperties": "Configuration=Debug;Platform=AnyCPU",
+      "AdditionalBuildPropertiesToRemove": "WebPublishProfileFile;TargetFramework"
+    }
+  ],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
