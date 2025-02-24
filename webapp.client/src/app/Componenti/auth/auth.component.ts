@@ -15,33 +15,46 @@ export class AuthComponent implements OnInit {
   registerForm: FormGroup;
   successMessage: string = '';
   errorMessage: string = '';
-  roles: any[] = [];  // Array per memorizzare i ruoli
+  roles: any[] = [];
 
   constructor(private fb: FormBuilder, private authService: AuthService) {
     this.registerForm = this.fb.group({
       username: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      roleId: [null, Validators.required]  // Il campo per il ruolo, inizializzato come null
+      roleId: [null, Validators.required]
     });
   }
 
   ngOnInit(): void {
-    this.loadRoles();  // Carica i ruoli quando il componente viene inizializzato
+    this.loadRoles();
   }
 
   loadRoles(): void {
     this.authService.getRoles().subscribe({
-      next: (data) => this.roles = data,  // Popola l'array dei ruoli con i dati ricevuti
-      error: (err) => this.errorMessage = 'Failed to load roles: ' + err.error
+      next: (data) => {
+        this.roles = [{ id: null, name: "Choose your role" }, ...data]; // Aggiunge l'opzione in cima
+      },
+      error: (err) => {
+        const errorMessage = err.error?.message || "Failed to load roles";
+        this.errorMessage = errorMessage;
+      }
     });
   }
+
 
   register(): void {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe({
-        next: () => this.successMessage = 'Registration successful!',
-        error: err => this.errorMessage = 'Registration failed: ' + err.error
+        next: () => {
+          this.successMessage = 'Registration successful!';
+          this.errorMessage = ''; // Pulisce eventuali errori precedenti
+          this.registerForm.reset(); // Resetta il form dopo la registrazione
+        },
+        error: (err) => {
+          const errorMessage = err.error?.message || "Registration failed";
+          this.errorMessage = errorMessage;
+        }
       });
     }
   }

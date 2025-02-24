@@ -1,51 +1,51 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebApp.Server.Data;
+﻿using BusinessLogic.Dtos.WebApp.Server.Dtos;
+using BusinessLogic.IManager;
+using Microsoft.AspNetCore.Mvc;
 using WebApp.Server.Dtos;
-using WebApp.Server.Models;
 
-namespace WebApp.Server.Controllers
+[Route("api/[controller]")]
+[ApiController]
+public class AuthController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
+    private readonly IAuthService _authService;
 
-    public class AuthController : ControllerBase
+    public AuthController(IAuthService authService)
     {
-        private readonly ApplicationDbContext _context;
-        public AuthController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        _authService = authService;
+    }
 
-            var user = new User
-            {
-                Id = Guid.NewGuid(),
-                Username = registerDto.Username,
-                Email = registerDto.Email,
-                PasswordHash = registerDto.Password, // Dovresti usare un sistema di hashing
-                RoleId = registerDto.RoleId,
-                CreatedAt = DateTime.UtcNow
-            };
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(new { message = "Invalid data", details = ModelState });
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+        var result = await _authService.RegisterAsync(registerDto);
 
-            return Ok(new { message = "User registered successfully" });
-        }
+        if (result != "Success")
+            return BadRequest(new { message = result });
 
-        [HttpGet("roles")]
-        public async Task<IActionResult> GetRoles()
-        {
-            var roles = await _context.Roles.ToListAsync();
-            return Ok(roles);
-        }
+        return Ok(new { message = "User registered successfully" });
+    }
 
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(new { message = "Invalid data", details = ModelState });
+
+        var token = await _authService.LoginAsync(loginDto);
+
+        if (string.IsNullOrEmpty(token))
+            return Unauthorized(new { message = "Invalid email or password." });
+
+        return Ok(new { token });
+    }
+
+    [HttpGet("roles")]
+    public async Task<IActionResult> GetRoles()
+    {
+        var roles = await _authService.GetRolesAsync();
+        return Ok(roles);  // Restituisce i ruoli come RoleDto
     }
 }

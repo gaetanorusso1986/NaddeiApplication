@@ -1,0 +1,17 @@
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.AssemblyInfoInputs.cache
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.AssemblyInfo.cs
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.csproj.CoreCompileInputs.cache
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.sourcelink.json
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\bin\Debug\net8.0\spa.proxy.json
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\bin\Debug\net8.0\DataAccessLevel.deps.json
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\bin\Debug\net8.0\DataAccessLevel.runtimeconfig.json
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\bin\Debug\net8.0\DataAccessLevel.dll
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\bin\Debug\net8.0\DataAccessLevel.pdb
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.csproj.AssemblyReference.cache
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\spa.proxy.json
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.dll
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\refint\DataAccessLevel.dll
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.pdb
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\DataAccessLevel.genruntimeconfig.cache
+C:\Users\D.Naddei\Desktop\WebApp\DataAccessLevel\obj\Debug\net8.0\ref\DataAccessLevel.dll

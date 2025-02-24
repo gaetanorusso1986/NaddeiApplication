@@ -1,18 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface RegisterDto {
-  username: string;
-  email: string;
-  password: string;
-  roleId: number;
-}
-
-export interface Role {
-  id: number;
-  name: string;
-}
+import { RegisterDto } from '../Dtos/RegisterDto';
+import { RoleDto } from '../Dtos/RoleDto';
+;
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -24,7 +15,7 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/register`, user);
   }
 
-  getRoles(): Observable<Role[]> {
-    return this.http.get<Role[]>(`${this.apiUrl}/roles`);
+  getRoles(): Observable<RoleDto[]> {
+    return this.http.get<RoleDto[]>(`${this.apiUrl}/roles`);
   }
 }

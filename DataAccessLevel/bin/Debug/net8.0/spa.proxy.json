@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "",
+"RedirectUrl": "",
+"LaunchCommand": "",
+"WorkingDirectory": "C:\\Users\\D.Naddei\\Desktop\\WebApp\\DataAccessLevel",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}
