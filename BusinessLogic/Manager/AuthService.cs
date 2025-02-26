@@ -1,70 +1,100 @@
-﻿using BusinessLogic.Dtos.WebApp.Server.Dtos;
-using BusinessLogic.Dtos;
+﻿using BusinessLogic.Dtos;
 using BusinessLogic.IManager;
 using DataAccessLevel;
-using System.Text;
-using WebApp.Server.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using WebApp.Server.Models;
 
-public class AuthService : IAuthService
+namespace BusinessLogic.Manager
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ITokenService _tokenService;
-    private readonly IUserFactory _userFactory;
-
-    public AuthService(ApplicationDbContext context, ITokenService tokenService, IUserFactory userFactory)
+    public class AuthService : IAuthService
     {
-        _context = context;
-        _tokenService = tokenService;
-        _userFactory = userFactory;
-    }
+        private readonly ApplicationDbContext _context;
+        private readonly string _adminAuthCode;
+        private readonly string _jwtSecret;
+        private readonly int _jwtExpirationMinutes;
 
-    public async Task<string> RegisterAsync(RegisterDto registerDto)
-    {
-        if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
-            return "Email already in use";
+        public AuthService(ApplicationDbContext context, IConfiguration configuration)
+        {
+            _context = context;
+            _adminAuthCode = configuration["Authentication:AdminAuthCode"]
+                ?? throw new Exception("Admin authentication code not found in configuration.");
+            _jwtSecret = configuration["Jwt:Secret"]
+                ?? throw new Exception("JWT secret key not found in configuration.");
+            _jwtExpirationMinutes = int.Parse(configuration["Jwt:ExpirationMinutes"] ?? "60");
+        }
 
-        if (await _context.Users.AnyAsync(u => u.Username == registerDto.Username))
-            return "Username already taken";
-
-        var roleExists = await _context.Roles.AnyAsync(r => r.Id == registerDto.RoleId);
-        if (!roleExists)
-            return "Invalid role";
-
-        var hashedPassword = HashPassword(registerDto.Password);
-        var user = _userFactory.CreateUser(registerDto, hashedPassword);
-
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        return "Success";
-    }
-
-    public async Task<string> LoginAsync(LoginDto loginDto)
-    {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
-        if (user == null || !VerifyPassword(loginDto.Password, user.PasswordHash))
-            return "Invalid email or password";
-
-        return _tokenService.GenerateJwtToken(user);
-    }
-
-    public async Task<IEnumerable<RoleDto>> GetRolesAsync()
-    {
-        var roles = await _context.Roles
-            .Select(r => new RoleDto
+        public async Task<bool> RegisterAsync(RegisterRequest request)
+        {
+            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
             {
-                Id = r.Id.ToString(),  
-                Name = r.Name
-            })
-            .ToListAsync();
+                throw new Exception("Email già in uso.");
+            }
 
-        return roles;
+            var role = await _context.Roles.FindAsync(request.RoleId);
+            if (role == null)
+            {
+                throw new Exception("Ruolo non valido.");
+            }
+
+            if (role.Name == "Admin" && request.AdminAuthCode != _adminAuthCode)
+            {
+                throw new Exception("Codice di autenticazione admin non valido.");
+            }
+
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Username = request.Username,
+                Email = request.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
+                RoleId = request.RoleId
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<string?> LoginAsync(LoginRequest request)
+        {
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Email == request.Email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return null;
+            }
+
+            return GenerateJwtToken(user);
+        }
+
+        private string GenerateJwtToken(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_jwtSecret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Role.Name)
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtExpirationMinutes),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
+        }
     }
-
-
-    private string HashPassword(string password) =>
-        Convert.ToBase64String(System.Security.Cryptography.SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(password)));
-
-    private bool VerifyPassword(string password, string storedHash) =>
-        HashPassword(password) == storedHash;
 }

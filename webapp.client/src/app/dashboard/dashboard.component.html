@@ -1,0 +1,19 @@
+<!-- dashboard.component.html -->
+<app-header></app-header>
+
+<div>
+  <!-- Messaggio di errore, visualizzato solo se errorMessage è presente -->
+  <div *ngIf="errorMessage; else pageList" class="error-message">
+    <p>{{ errorMessage }}</p>
+  </div>
+
+  <ng-template #pageList>
+    <ul>
+      <li *ngFor="let page of pages">
+        {{ page.title }}
+      </li>
+    </ul>
+  </ng-template>
+</div>
+
+<app-footer></app-footer>
