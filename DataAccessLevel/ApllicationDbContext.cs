@@ -17,34 +17,44 @@ namespace DataAccessLevel
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
-            // Impostazioni di base per GUID
+            // Definizione delle relazioni
             modelBuilder.Entity<User>()
-                .Property(u => u.Id)
-                .HasDefaultValueSql("NEWID()");
-
-            modelBuilder.Entity<Page>()
-                .Property(p => p.Id)
-                .HasDefaultValueSql("NEWID()");
-
-            modelBuilder.Entity<PageSection>()
-                .Property(ps => ps.Id)
-                .HasDefaultValueSql("NEWID()");
-
-            modelBuilder.Entity<PageContent>()
-                .Property(pc => pc.Id)
-                .HasDefaultValueSql("NEWID()");
+                .HasOne(u => u.Role)
+                .WithMany(r => r.Users)
+                .HasForeignKey(u => u.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PasswordHistory>()
-                .Property(ph => ph.Id)
-                .HasDefaultValueSql("NEWID()");
+                .HasOne(ph => ph.User)
+                .WithMany(u => u.PasswordHistory)
+                .HasForeignKey(ph => ph.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Setting>()
-                .Property(s => s.Id)
-                .HasDefaultValueSql("NEWID()");
+            modelBuilder.Entity<Page>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Aggiungere i ruoli Admin e User con descrizioni
+            modelBuilder.Entity<Page>()
+                .HasOne(p => p.Parent)
+                .WithMany(p => p.Children)
+                .HasForeignKey(p => p.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PageSection>()
+                .HasOne(ps => ps.Page)
+                .WithMany(p => p.PageSections)
+                .HasForeignKey(ps => ps.PageId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PageContent>()
+                .HasOne(pc => pc.PageSection)
+                .WithMany(ps => ps.PageContents)
+                .HasForeignKey(pc => pc.SectionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Seed iniziale per i ruoli
             modelBuilder.Entity<Role>().HasData(
                 new Role
                 {

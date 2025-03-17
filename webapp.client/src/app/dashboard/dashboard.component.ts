@@ -6,7 +6,7 @@ import { PagesService } from '../Services/pages.service';
   selector: 'app-dashboard',
   standalone: false,
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent {
   pages: any[] = [];
@@ -18,10 +18,14 @@ export class DashboardComponent {
     this.pagesService.getPages().subscribe(
       (data) => {
         this.pages = data; // Se ci sono pagine, le assegni al componente
+        if (this.pages.length === 0) {
+          this.errorMessage = 'Nessuna pagina trovata.';
+        }
       },
       (error) => {
-        this.errorMessage = error; // Se non ci sono pagine, setti il messaggio di errore
+        this.errorMessage = 'Errore nel recupero delle pagine: ' + error.message; // Mostra errore specifico
       }
     );
   }
 }
+

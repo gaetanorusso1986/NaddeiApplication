@@ -33,7 +33,7 @@ namespace DataAccessLevel.Migrations
                 name: "Settings",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -49,7 +49,7 @@ namespace DataAccessLevel.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -66,14 +66,14 @@ namespace DataAccessLevel.Migrations
                         column: x => x.RoleId,
                         principalTable: "Roles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Pages",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ParentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -87,20 +87,21 @@ namespace DataAccessLevel.Migrations
                         name: "FK_Pages_Pages_ParentId",
                         column: x => x.ParentId,
                         principalTable: "Pages",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Pages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "PasswordHistories",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ChangedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -120,7 +121,7 @@ namespace DataAccessLevel.Migrations
                 name: "PageSections",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Order = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -140,19 +141,18 @@ namespace DataAccessLevel.Migrations
                 name: "PageContents",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContentData = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PageSectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PageContents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PageContents_PageSections_PageSectionId",
-                        column: x => x.PageSectionId,
+                        name: "FK_PageContents_PageSections_SectionId",
+                        column: x => x.SectionId,
                         principalTable: "PageSections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -168,9 +168,9 @@ namespace DataAccessLevel.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PageContents_PageSectionId",
+                name: "IX_PageContents_SectionId",
                 table: "PageContents",
-                column: "PageSectionId");
+                column: "SectionId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pages_ParentId",

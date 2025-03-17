@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../Services/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-auth-page',
@@ -43,8 +42,27 @@ export class AuthPageComponent implements OnInit {
   }
 
   toggleMode() {
-    this.isLogin = !this.isLogin;
+    this.isLogin = !this.isLogin; // Cambia modalità tra login e registrazione
+  
+    // Resetta i modelli
+    this.email = '';
+    this.password = '';
+    this.firstName = '';
+    this.lastName = '';
+    this.username = '';
+    this.role = '2'; // Imposta il valore predefinito per il ruolo (User)
+    this.adminAuthCode = '';
+    this.loginError = ''
+  
+    // Resetta gli errori
+    this.emailError = false;
+    this.passwordError = false;
+    this.firstNameError = false;
+    this.lastNameError = false;
+    this.usernameError = false;
+    this.adminAuthCodeError = false;
   }
+  
 
   validateForm() {
     // Validation logic

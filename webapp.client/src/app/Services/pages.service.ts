@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-
+import { Page, PageDto } from '../Dtos/PageDto';
 @Injectable({
   providedIn: 'root'
 })
@@ -11,16 +11,30 @@ export class PagesService {
 
   constructor(private http: HttpClient) { }
 
-  getPages(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl).pipe(
+  getPages(): Observable<Page[]> {
+    return this.http.get<Page[]>(this.apiUrl).pipe(
       catchError((error) => {
         if (error.status === 404) {
-          // Restituisce un messaggio di errore nel caso non ci siano pagine
-          return throwError('Non esistono pagine.');
+          console.warn('Nessuna pagina trovata.');
+          return new Observable<Page[]>(observer => {
+            observer.next([]);  // Restituisci un array vuoto
+            observer.complete();
+          });
         }
-        return throwError('Errore nel recupero delle pagine.');
+        console.error('Errore nel recupero delle pagine:', error);
+        return throwError(() => new Error('Errore nel recupero delle pagine.'));
       })
     );
+  }
+  
+   // Create a new page
+   createPage(page: PageDto): Observable<Page> {
+    return this.http.post<Page>(this.apiUrl, page);
+  }
+
+  // Delete a page by pageId
+  deletePage(pageId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${pageId}`);
   }
   
 }

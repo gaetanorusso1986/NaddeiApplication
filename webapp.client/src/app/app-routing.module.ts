@@ -5,7 +5,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CreatePageComponent } from './Componenti/create-page/create-page.component';
 import { ViewPageComponent } from './Componenti/view-page/view-page.component';
 
-
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'auth', component: AuthPageComponent },

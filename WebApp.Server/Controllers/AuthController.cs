@@ -40,5 +40,26 @@ namespace WebApp.Server.Controllers
 
             return Ok(new { token });
         }
+
+
+        [HttpGet("password-history/{userId}")]
+        public async Task<IActionResult> GetPasswordHistory(Guid userId)
+        {
+            try
+            {
+                var passwordHistory = await _authService.GetPasswordHistoryAsync(userId);
+                if (passwordHistory == null || !passwordHistory.Any())
+                {
+                    return NotFound(new { message = "Nessuna cronologia delle password trovata." });
+                }
+                return Ok(passwordHistory); // Restituisce la lista dei DTO
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
     }
 }

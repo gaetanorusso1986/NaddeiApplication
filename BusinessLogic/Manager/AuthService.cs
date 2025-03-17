@@ -46,6 +46,7 @@ namespace BusinessLogic.Manager
                 throw new Exception("Codice di autenticazione admin non valido.");
             }
 
+            // Creazione dell'utente
             var user = new User
             {
                 Id = Guid.NewGuid(),
@@ -57,10 +58,26 @@ namespace BusinessLogic.Manager
                 RoleId = request.RoleId
             };
 
+            // Aggiungi l'utente al contesto del database
             _context.Users.Add(user);
+
+            // Salva la password nella PasswordHistory
+            var passwordHistory = new PasswordHistory
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                PasswordHash = user.PasswordHash,
+                ChangedAt = DateTime.UtcNow
+            };
+
+            _context.PasswordHistories.Add(passwordHistory);
+
+            // Salva entrambe le entità nel database
             await _context.SaveChangesAsync();
+
             return true;
         }
+
 
         public async Task<string?> LoginAsync(LoginRequest request)
         {
@@ -96,5 +113,28 @@ namespace BusinessLogic.Manager
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        public async Task<IEnumerable<PasswordHistoryDto>> GetPasswordHistoryAsync(Guid userId)
+        {
+            var passwordHistory = await _context.PasswordHistories
+                .Where(ph => ph.UserId == userId)
+                .OrderByDescending(ph => ph.ChangedAt)
+                .Include(ph => ph.User) // Assicurati di includere User
+                .ToListAsync();
+
+            // Proietta i dati sul DTO
+            var passwordHistoryDtos = passwordHistory.Select(ph => new PasswordHistoryDto
+            {
+                FirstName = ph.User.FirstName,
+                LastName = ph.User.LastName,
+                Email = ph.User.Email,
+                ChangedAt = ph.ChangedAt,
+                PasswordHash = ph.PasswordHash  // Ritorna la password non criptata
+            });
+
+            return passwordHistoryDtos;
+        }
+
+
     }
 }
