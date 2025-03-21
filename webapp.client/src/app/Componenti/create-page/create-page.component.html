@@ -1,0 +1,57 @@
+<div class="container mt-4 create-page-container">
+  <h1 class="text-center mb-4">Crea una nuova pagina</h1>
+
+  <form (ngSubmit)="createPage()">
+    <!-- Titolo -->
+    <div class="mb-3">
+      <label for="title" class="form-label">Titolo:</label>
+      <input type="text" class="form-control" id="title" [(ngModel)]="newPage.title" name="title" required />
+    </div>
+
+    <!-- Pagina principale -->
+    <div class="mb-3">
+      <label for="parentId" class="form-label">Seleziona una pagina principale:</label>
+      <select id="parentId" class="form-select" [(ngModel)]="newPage.parentId" name="parentId">
+        <option value="" selected>--- Nessuna Pagina Principale ---</option>
+        <option *ngFor="let page of pages" [value]="page.id">{{ page.title }}</option>
+      </select>
+    </div>
+
+    <!-- Sezioni -->
+    <div *ngFor="let section of newPage.pageSections; let i = index" class="mb-4">
+      <h3>Sezione {{ i + 1 }}</h3>
+
+      <!-- Contenuti della sezione -->
+      <div *ngFor="let content of section.pageContents; let j = index" class="mb-3">
+        <div class="mb-3">
+          <label for="contentType-{{i}}-{{j}}" class="form-label">Tipo di Contenuto:</label>
+          <select id="contentType-{{i}}-{{j}}" class="form-select" [(ngModel)]="content.contentType" name="contentType-{{i}}-{{j}}">
+            <option value="text">Testo</option>
+            <option value="image">Immagine</option>
+            <option value="video">Video</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="contentData-{{i}}-{{j}}" class="form-label">Dati del Contenuto:</label>
+          <input type="text" id="contentData-{{i}}-{{j}}" class="form-control" [(ngModel)]="content.contentData" name="contentData-{{i}}-{{j}}" required />
+        </div>
+
+        <button type="button" class="btn btn-danger" (click)="removeContent(i, j)">Rimuovi Contenuto</button>
+      </div>
+
+      <button type="button" class="btn btn-primary" (click)="addContent(i)">Aggiungi Contenuto</button>
+    </div>
+
+    <!-- Bottone per creare la pagina -->
+    <div class="text-center">
+      <button type="submit" class="btn btn-success">Crea Pagina</button>
+    </div>
+  </form>
+
+  <!-- Messaggio se non ci sono pagine principali -->
+  <div *ngIf="pages.length === 0" class="alert alert-warning mt-4">
+    <p>Nessuna pagina esistente per essere selezionata come principale.</p>
+  </div>
+</div>
+

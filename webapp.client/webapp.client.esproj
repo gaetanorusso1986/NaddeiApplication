@@ -9,6 +9,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\app\Componenti\" />
-    <Folder Include="src\app\Services\" />
+    <Folder Include="src\app\Dtos\" />
   </ItemGroup>
 </Project>
