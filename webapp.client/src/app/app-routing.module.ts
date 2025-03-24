@@ -6,11 +6,12 @@ import { AuthComponent } from './Pages/auth/auth.component';
 
 
 const routes: Routes = [
-   { path: '', redirectTo: 'Home', pathMatch: 'full' },
-   { path: 'Home', component: HomeComponent },
-   { path: 'Login', component: AuthComponent },
-   //{ path: 'Admin', component: DashboardComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'login', component: AuthComponent },
+  { path: '**', redirectTo: 'home' } 
 ];
+
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
