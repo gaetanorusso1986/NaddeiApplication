@@ -4,13 +4,23 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
-import { AuthComponent } from './Componenti/auth/auth.component';  
-import { AuthService } from './Services/auth.service';
 import { RouterModule } from '@angular/router';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthPageComponent } from './Componenti/auth-page/auth-page.component';
+import { HeaderComponent } from './Componenti/header/header.component';
+import { FooterComponent } from './Componenti/footer/footer.component';
+import { CreatePageComponent } from './Componenti/create-page/create-page.component';
+import { ViewPageComponent } from './Componenti/view-page/view-page.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DashboardComponent,
+    AuthPageComponent,
+    HeaderComponent,
+    FooterComponent,
+    CreatePageComponent,
+    ViewPageComponent
 
   ],
 
@@ -18,11 +28,9 @@ import { RouterModule } from '@angular/router';
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    AuthComponent,
-    RouterModule 
+    RouterModule
   ],
-  providers: [
-    AuthService,  
+  providers: [ 
     provideHttpClient()
   ],
   bootstrap: [AppComponent]

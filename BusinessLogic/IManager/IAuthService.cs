@@ -1,15 +1,14 @@
-﻿using BusinessLogic.Dtos;
-using BusinessLogic.Dtos.WebApp.Server.Dtos;
-using WebApp.Server.Dtos;
-
+﻿
+using BusinessLogic.Dtos;
+using WebApp.Server.Models;
 
 namespace BusinessLogic.IManager
 {
     public interface IAuthService
     {
-        Task<string> RegisterAsync(RegisterDto registerDto);
-        Task<string> LoginAsync(LoginDto loginDto);
-        Task<IEnumerable<RoleDto>> GetRolesAsync();  // Aggiungi questo metodo
-    }
+        Task<bool> RegisterAsync(RegisterRequest request);
+        Task<string?> LoginAsync(LoginRequest request);
+        Task<IEnumerable<PasswordHistoryDto>> GetPasswordHistoryAsync(Guid userId);
 
+    }
 }

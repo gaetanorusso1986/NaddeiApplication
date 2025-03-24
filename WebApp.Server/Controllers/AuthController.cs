@@ -1,51 +1,65 @@
-﻿using BusinessLogic.Dtos.WebApp.Server.Dtos;
+﻿using BusinessLogic.Dtos;
 using BusinessLogic.IManager;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.Server.Dtos;
 
-[Route("api/[controller]")]
-[ApiController]
-public class AuthController : ControllerBase
+namespace WebApp.Server.Controllers
 {
-    private readonly IAuthService _authService;
-
-    public AuthController(IAuthService authService)
+    [Route("api/auth")]
+    [ApiController]
+    public class AuthController : ControllerBase
     {
-        _authService = authService;
-    }
+        private readonly IAuthService _authService;
 
-    [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(new { message = "Invalid data", details = ModelState });
+        public AuthController(IAuthService authService)
+        {
+            _authService = authService;
+        }
 
-        var result = await _authService.RegisterAsync(registerDto);
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            try
+            {
+                bool isRegistered = await _authService.RegisterAsync(request);
+                return Ok(new { message = "Registrazione completata." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
-        if (result != "Success")
-            return BadRequest(new { message = result });
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            var token = await _authService.LoginAsync(request);
+            if (token == null)
+            {
+                return Unauthorized(new { message = "Credenziali non valide." });
+            }
 
-        return Ok(new { message = "User registered successfully" });
-    }
+            return Ok(new { token });
+        }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(new { message = "Invalid data", details = ModelState });
 
-        var token = await _authService.LoginAsync(loginDto);
+        [HttpGet("password-history/{userId}")]
+        public async Task<IActionResult> GetPasswordHistory(Guid userId)
+        {
+            try
+            {
+                var passwordHistory = await _authService.GetPasswordHistoryAsync(userId);
+                if (passwordHistory == null || !passwordHistory.Any())
+                {
+                    return NotFound(new { message = "Nessuna cronologia delle password trovata." });
+                }
+                return Ok(passwordHistory); // Restituisce la lista dei DTO
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
 
-        if (string.IsNullOrEmpty(token))
-            return Unauthorized(new { message = "Invalid email or password." });
 
-        return Ok(new { token });
-    }
-
-    [HttpGet("roles")]
-    public async Task<IActionResult> GetRoles()
-    {
-        var roles = await _authService.GetRolesAsync();
-        return Ok(roles);  // Restituisce i ruoli come RoleDto
     }
 }

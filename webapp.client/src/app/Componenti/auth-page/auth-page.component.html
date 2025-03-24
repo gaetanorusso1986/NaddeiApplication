@@ -1,0 +1,101 @@
+<div id="all">
+  <div id="header">
+    <!-- Icona di ritorno alla dashboard -->
+    <a href="/dashboard" class="back-to-dashboard">
+      <i class="bi bi-box-arrow-in-left"></i> Tornare alla Dashboard
+    </a>
+  </div>
+  <div class="auth-wrapper">
+    <div class="auth-container">
+      <h2 class="form-floating mb-3">{{ isLogin ? 'Login' : 'Registrazione' }}</h2>
+
+      <!-- Error Message -->
+      <div *ngIf="loginError" class="alert alert-danger">
+        {{ loginError }}
+      </div>
+
+      <form (ngSubmit)="onSubmit()">
+        <!-- Email -->
+        <div class="form-floating mb-5" [ngClass]="{'has-danger': emailError, 'has-success': !emailError}">
+          <input type="email" class="form-control" id="floatingEmail" placeholder="name@example.com" [(ngModel)]="email"
+            name="email" required [class.is-invalid]="emailError" [class.is-valid]="!emailError && email" />
+          <label for="floatingEmail">Email address</label>
+          <div *ngIf="emailError" class="invalid-feedback">
+            Inserisci una email valida.
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-floating mb-5" [ngClass]="{'has-danger': passwordError, 'has-success': !passwordError}">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+            [(ngModel)]="password" name="password" required [class.is-invalid]="passwordError"
+            [class.is-valid]="!passwordError && password" />
+          <label for="floatingPassword">Password</label>
+          <div *ngIf="passwordError" class="invalid-feedback">
+            La password è obbligatoria.
+          </div>
+        </div>
+
+        <!-- Nome, Cognome, Username, Role (visibili solo durante la registrazione) -->
+        <div *ngIf="!isLogin">
+          <div class="form-floating mb-5" [ngClass]="{'has-danger': firstNameError, 'has-success': !firstNameError}">
+            <input type="text" class="form-control" id="floatingFirstName" placeholder="Nome" [(ngModel)]="firstName"
+              name="firstName" required [class.is-invalid]="firstNameError"
+              [class.is-valid]="!firstNameError && firstName" />
+            <label for="floatingFirstName">Nome</label>
+            <div *ngIf="firstNameError" class="invalid-feedback">
+              Il nome è obbligatorio.
+            </div>
+          </div>
+
+          <div class="form-floating mb-5" [ngClass]="{'has-danger': lastNameError, 'has-success': !lastNameError}">
+            <input type="text" class="form-control" id="floatingLastName" placeholder="Cognome" [(ngModel)]="lastName"
+              name="lastName" required [class.is-invalid]="lastNameError"
+              [class.is-valid]="!lastNameError && lastName" />
+            <label for="floatingLastName">Cognome</label>
+            <div *ngIf="lastNameError" class="invalid-feedback">
+              Il cognome è obbligatorio.
+            </div>
+          </div>
+
+          <div class="form-floating mb-5" [ngClass]="{'has-danger': usernameError, 'has-success': !usernameError}">
+            <input type="text" class="form-control" id="floatingUsername" placeholder="Username" [(ngModel)]="username"
+              name="username" required [class.is-invalid]="usernameError"
+              [class.is-valid]="!usernameError && username" />
+            <label for="floatingUsername">Username</label>
+            <div *ngIf="usernameError" class="invalid-feedback">
+              Lo username è obbligatorio.
+            </div>
+          </div>
+
+          <div class="form-floating mb-5">
+            <select class="form-control" [(ngModel)]="role" name="role" id="floatingRole">
+              <option value="2">User</option>
+              <option value="1">Admin</option>
+            </select>
+            <label for="floatingRole">Ruolo</label>
+          </div>
+
+          <div *ngIf="role === '1'" class="form-floating mb-5"
+            [ngClass]="{'has-danger': adminAuthCodeError, 'has-success': !adminAuthCodeError}">
+            <input type="text" class="form-control" id="floatingAdminAuthCode" placeholder="Codice Admin"
+              [(ngModel)]="adminAuthCode" name="adminAuthCode" [class.is-invalid]="adminAuthCodeError"
+              [class.is-valid]="!adminAuthCodeError && adminAuthCode" />
+            <label for="floatingAdminAuthCode">Codice Admin</label>
+            <div *ngIf="adminAuthCodeError" class="invalid-feedback">
+              Il codice Admin è obbligatorio.
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary">{{ isLogin ? 'Accedi' : 'Registrati' }}</button>
+      </form>
+
+      <!-- Toggle Login/Register -->
+      <p (click)="toggleMode()">
+        {{ isLogin ? 'Non hai un account? Registrati' : 'Hai già un account? Accedi' }}
+      </p>
+    </div>
+  </div>
+</div>
