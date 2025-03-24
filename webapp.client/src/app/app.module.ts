@@ -2,35 +2,31 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthPageComponent } from './Componenti/auth-page/auth-page.component';
-import { HeaderComponent } from './Componenti/header/header.component';
-import { FooterComponent } from './Componenti/footer/footer.component';
-import { CreatePageComponent } from './Componenti/create-page/create-page.component';
-import { ViewPageComponent } from './Componenti/view-page/view-page.component';
+import { HomeComponent } from './Home/home/home.component';
+import { HeaderComponent } from './components/header/header.component';
+import { FooterComponent } from './components/footer/footer.component';
+import { AuthComponent } from './Pages/auth/auth.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent,
-    AuthPageComponent,
+    HomeComponent,
     HeaderComponent,
     FooterComponent,
-    CreatePageComponent,
-    ViewPageComponent
-
+    AuthComponent,
   ],
 
-  imports: [ 
+  imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    ReactiveFormsModule
   ],
-  providers: [ 
+  providers: [
     provideHttpClient()
   ],
   bootstrap: [AppComponent]

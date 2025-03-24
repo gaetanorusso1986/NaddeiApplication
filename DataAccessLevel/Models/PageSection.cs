@@ -2,16 +2,14 @@
 {
     public class PageSection
     {
-        public Guid Id { get; set; }  // GUID per PageSection ID
-        public Guid PageId { get; set; }  // Collegato a Page
+        public Guid Id { get; set; }
+        public Guid PageId { get; set; }  // Relazione con Page
         public int Order { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Relazione con Page
-        public Page Page { get; set; }
-
-        // Relazione con PageContents
-        public ICollection<PageContent> PageContents { get; set; }
+        // Aggiungi questa proprietà di navigazione per stabilire la relazione inversa
+        public Page Page { get; set; }  // Relazione con Page
+        public List<PageContentGroup> PageContentGroups { get; set; } = new();
     }
 
 }

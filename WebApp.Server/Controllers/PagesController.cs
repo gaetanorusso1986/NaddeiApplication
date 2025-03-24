@@ -21,7 +21,7 @@ namespace WebApp.Server.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPages()
         {
-            var pages = await _pageService.GetPagesAsync(); // Senza bisogno di token o userId
+            var pages = await _pageService.GetPagesAsync();
             if (pages == null || pages.Count == 0)
             {
                 return NotFound(new { message = "Non esistono pagine." });
@@ -29,29 +29,7 @@ namespace WebApp.Server.Controllers
             return Ok(pages);
         }
 
-        // GET per le sezioni di una pagina
-        [HttpGet("{pageId}/sections")]
-        public async Task<IActionResult> GetPageSections(Guid pageId)
-        {
-            var sections = await _pageService.GetPageSectionsAsync(pageId); // Senza bisogno di token o userId
-            if (sections == null || sections.Count == 0)
-            {
-                return NotFound(new { message = "Nessuna sezione trovata per questa pagina." });
-            }
-            return Ok(sections);
-        }
 
-        // GET per i contenuti di una sezione
-        [HttpGet("sections/{sectionId}/contents")]
-        public async Task<IActionResult> GetPageContents(Guid sectionId)
-        {
-            var contents = await _pageService.GetPageContentsAsync(sectionId); // Senza bisogno di token o userId
-            if (contents == null || contents.Count == 0)
-            {
-                return NotFound(new { message = "Nessun contenuto trovato per questa sezione." });
-            }
-            return Ok(contents);
-        }
 
         // Creare una pagina
         [HttpPost]
@@ -62,7 +40,6 @@ namespace WebApp.Server.Controllers
                 return BadRequest(new { message = "Dati non validi." });
             }
 
-            // Verifica se l'UserId è valido
             if (!await _pageService.UserExistsAsync(pageDto.UserId))
             {
                 return BadRequest(new { message = "L'utente specificato non esiste." });
@@ -72,6 +49,44 @@ namespace WebApp.Server.Controllers
             return CreatedAtAction(nameof(GetPages), new { pageId = createdPage.Id }, createdPage);
         }
 
+        // Creare una sezione della pagina
+        [HttpPost("{pageId}/sections")]
+        public async Task<IActionResult> CreatePageSection(Guid pageId, [FromBody] PageSectionDto sectionDto)
+        {
+            if (sectionDto == null)
+            {
+                return BadRequest(new { message = "Dati non validi." });
+            }
+
+            var createdSection = await _pageService.CreatePageSectionAsync(pageId, sectionDto);
+            return CreatedAtAction(nameof(GetPages), new { pageId = createdSection.PageId, sectionId = createdSection.Id }, createdSection);
+        }
+
+        // Creare un gruppo di contenuti all'interno di una sezione
+        [HttpPost("sections/{sectionId}/content-groups")]
+        public async Task<IActionResult> CreatePageContentGroup(Guid sectionId, [FromBody] PageContentGroupDto contentGroupDto)
+        {
+            if (contentGroupDto == null)
+            {
+                return BadRequest(new { message = "Dati non validi." });
+            }
+
+            var createdContentGroup = await _pageService.CreatePageContentGroupAsync(sectionId, contentGroupDto);
+            return CreatedAtAction(nameof(GetPages), new { sectionId = createdContentGroup.SectionId, contentGroupId = createdContentGroup.Id }, createdContentGroup);
+        }
+
+        // Creare un contenuto all'interno di un gruppo di contenuti
+        [HttpPost("content-groups/{contentGroupId}/contents")]
+        public async Task<IActionResult> CreatePageContent(Guid contentGroupId, [FromBody] PageContentDto contentDto)
+        {
+            if (contentDto == null)
+            {
+                return BadRequest(new { message = "Dati non validi." });
+            }
+
+            var createdContent = await _pageService.CreatePageContentAsync(contentGroupId, contentDto);
+            return CreatedAtAction(nameof(GetPages), new { contentGroupId = createdContent.ContentGroupId, contentId = createdContent.Id }, createdContent);
+        }
 
 
 

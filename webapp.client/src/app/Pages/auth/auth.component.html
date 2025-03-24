@@ -1,0 +1,130 @@
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="col-4 shadow p-4 d-flex justify-content-center align-items-center flex-column">
+      <h4 class="mb-3">{{ isLogin ? 'Login' : 'Registrazione' }}</h4>
+      
+      <!-- Messaggio di errore per il login -->
+      <div *ngIf="loginError" class="text-danger">
+        <small>{{ loginError }}</small>
+      </div>
+  
+      <!-- Aggiunto il form con formGroup -->
+      <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+        <div class="form-group m-3 p-3 d-flex justify-content-center align-items-center flex-column">
+  
+          <!-- Email -->
+          <div class="form-group">
+  
+            <div class="input-group">   
+              <label for="Email" class="form-label">Email</label><br>
+              <span class="input-group-text">
+                <svg class="icon icon-sm" aria-hidden="true">
+                  <use href="/bootstrap-italia/svg/sprites.svg#it-user"></use>
+                </svg>
+              </span>
+              <input type="email" class="form-control" id="Email" formControlName="email"
+                placeholder="Inserisci la tua email">
+            </div>
+  
+            <div *ngIf="authForm.get('email')?.invalid && authForm.get('email')?.touched" class="text-danger">
+              <small *ngIf="authForm.get('email')?.hasError('required')">L'email è obbligatoria.</small>
+              <small *ngIf="authForm.get('email')?.hasError('email')">Inserisci una email valida.</small>
+            </div>
+          </div>
+  
+          <!-- Password -->
+          <div class="form-group mb-0">
+            <label for="Password" class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text">
+                <svg class="icon icon-sm" aria-hidden="true">
+                  <use href="/bootstrap-italia/svg/sprites.svg#it-key"></use>
+                </svg>
+              </span>
+              <input type="password" class="form-control" id="Password" formControlName="password"
+                placeholder="Inserisci la tua password">
+            </div>
+          </div>
+  
+          <!-- Sezione per la registrazione -->
+          <div class="form-group" [hidden]="isLogin">
+            <!-- Nome -->
+            <div class="form-group my-5">
+              <label for="FirstName" class="form-label">Nome</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="/bootstrap-italia/svg/sprites.svg#it-pencil"></use>
+                  </svg>
+                </span>
+                <input type="text" class="form-control" id="FirstName" formControlName="firstName"
+                  placeholder="Inserisci il tuo nome">
+              </div>
+            </div>
+  
+            <!-- Cognome -->
+            <div class="form-group">
+              <label for="LastName" class="form-label">Cognome</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="/bootstrap-italia/svg/sprites.svg#it-pencil"></use>
+                  </svg>
+                </span>
+                <input type="text" class="form-control" id="LastName" formControlName="lastName"
+                  placeholder="Inserisci il tuo cognome">
+              </div>
+            </div>
+  
+            <!-- Username -->
+            <div class="form-group">
+              <label for="Username" class="form-label">Username</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="/bootstrap-italia/svg/sprites.svg#it-pencil"></use>
+                  </svg>
+                </span>
+                <input type="text" class="form-control" id="Username" formControlName="username"
+                  placeholder="Inserisci il tuo username">
+              </div>
+            </div>
+  
+            <!-- Select Ruoli -->
+            <div class="select-wrapper">
+              <label for="defaultSelect">Ruolo</label>
+              <select id="defaultSelect" formControlName="role">
+                <option value="2">User</option>
+                <option value="1">Admin</option>
+              </select>
+            </div>
+  
+  
+  
+            <!-- Codice Admin (Visibile solo se si seleziona Admin) -->
+            <div class="form-group mt-5 mb-0" [hidden]="authForm.get('role')?.value !== '1'">
+              <label for="Codice" class="form-label">Codice Admin</label>
+              <div class="input-group">
+                <span class="input-group-text">
+                  <svg class="icon icon-sm" aria-hidden="true">
+                    <use href="/bootstrap-italia/svg/sprites.svg#it-pencil"></use>
+                  </svg>
+                </span>
+                <input type="text" class="form-control" id="Codice" formControlName="adminAuthCode"
+                  placeholder="Inserisci il tuo Codice">
+              </div>
+            </div>
+          </div>
+  
+          <!-- Pulsante di invio -->
+          <button type="submit" class="btn btn-primary btn-xs w-100" [disabled]="authForm.invalid">
+            {{ isLogin ? 'Accedi' : 'Registrati' }}
+          </button>
+  
+          <!-- Link per switch login/registrazione -->
+          <p (click)="toggleMode()" class="text-primary mt-3 cursor-pointer mb-0">
+            {{ isLogin ? 'Non hai un account? Registrati' : 'Hai già un account? Accedi' }}
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>

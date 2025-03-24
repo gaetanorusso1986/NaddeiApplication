@@ -14,6 +14,7 @@ namespace DataAccessLevel
         public DbSet<PageContent> PageContents { get; set; }
         public DbSet<PasswordHistory> PasswordHistories { get; set; }
         public DbSet<Setting> Settings { get; set; }
+        public DbSet<PageContentGroup> PageContentGroups { get; set; }  // Aggiunto
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,9 +50,22 @@ namespace DataAccessLevel
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PageContent>()
-                .HasOne(pc => pc.PageSection)
-                .WithMany(ps => ps.PageContents)
-                .HasForeignKey(pc => pc.SectionId)
+                .HasOne(pc => pc.PageContentGroup)
+                .WithMany(pcg => pcg.PageContents)
+                .HasForeignKey(pc => pc.ContentGroupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relazione tra PageContentGroup e PageContent
+            modelBuilder.Entity<PageContentGroup>()
+                .HasOne(pcg => pcg.PageSection)
+                .WithMany(ps => ps.PageContentGroups)
+                .HasForeignKey(pcg => pcg.SectionId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PageContent>()
+                .HasOne(pc => pc.PageContentGroup)
+                .WithMany(pcg => pcg.PageContents)
+                .HasForeignKey(pc => pc.ContentGroupId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             // Seed iniziale per i ruoli

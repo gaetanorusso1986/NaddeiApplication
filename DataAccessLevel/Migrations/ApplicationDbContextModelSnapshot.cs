@@ -60,15 +60,38 @@ namespace DataAccessLevel.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ContentData")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ContentGroupId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContentGroupId");
+
+                    b.ToTable("PageContents");
+                });
+
+            modelBuilder.Entity("WebApp.Server.Models.PageContentGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("SectionId")
                         .HasColumnType("uniqueidentifier");
@@ -77,7 +100,7 @@ namespace DataAccessLevel.Migrations
 
                     b.HasIndex("SectionId");
 
-                    b.ToTable("PageContents");
+                    b.ToTable("PageContentGroups");
                 });
 
             modelBuilder.Entity("WebApp.Server.Models.PageSection", b =>
@@ -261,8 +284,19 @@ namespace DataAccessLevel.Migrations
 
             modelBuilder.Entity("WebApp.Server.Models.PageContent", b =>
                 {
-                    b.HasOne("WebApp.Server.Models.PageSection", "PageSection")
+                    b.HasOne("WebApp.Server.Models.PageContentGroup", "PageContentGroup")
                         .WithMany("PageContents")
+                        .HasForeignKey("ContentGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PageContentGroup");
+                });
+
+            modelBuilder.Entity("WebApp.Server.Models.PageContentGroup", b =>
+                {
+                    b.HasOne("WebApp.Server.Models.PageSection", "PageSection")
+                        .WithMany("PageContentGroups")
                         .HasForeignKey("SectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -310,9 +344,14 @@ namespace DataAccessLevel.Migrations
                     b.Navigation("PageSections");
                 });
 
-            modelBuilder.Entity("WebApp.Server.Models.PageSection", b =>
+            modelBuilder.Entity("WebApp.Server.Models.PageContentGroup", b =>
                 {
                     b.Navigation("PageContents");
+                });
+
+            modelBuilder.Entity("WebApp.Server.Models.PageSection", b =>
+                {
+                    b.Navigation("PageContentGroups");
                 });
 
             modelBuilder.Entity("WebApp.Server.Models.Role", b =>

@@ -37,9 +37,12 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/bootstrap-italia/dist/css/bootstrap-italia.min.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap-italia/dist/js/bootstrap-italia.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {
