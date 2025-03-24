@@ -8,7 +8,9 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\webapp.client\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\app\Componenti\" />
-    <Folder Include="src\app\Dtos\" />
+    <None Remove="src\app\Componenti\**" />
+    <None Remove="src\app\Dtos\**" />
+    <TypeScriptConfiguration Remove="src\app\Componenti\**" />
+    <TypeScriptConfiguration Remove="src\app\Dtos\**" />
   </ItemGroup>
 </Project>

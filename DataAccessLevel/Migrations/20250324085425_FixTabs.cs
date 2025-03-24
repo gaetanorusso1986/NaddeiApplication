@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccessLevel.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FixTabs : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -138,22 +138,43 @@ namespace DataAccessLevel.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PageContents",
+                name: "PageContentGroups",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SectionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ContentData = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PageContentGroups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PageContentGroups_PageSections_SectionId",
+                        column: x => x.SectionId,
+                        principalTable: "PageSections",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PageContents",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContentGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContentType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ContentData = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Order = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PageContents", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PageContents_PageSections_SectionId",
-                        column: x => x.SectionId,
-                        principalTable: "PageSections",
+                        name: "FK_PageContents_PageContentGroups_ContentGroupId",
+                        column: x => x.ContentGroupId,
+                        principalTable: "PageContentGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -168,9 +189,14 @@ namespace DataAccessLevel.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PageContents_SectionId",
-                table: "PageContents",
+                name: "IX_PageContentGroups_SectionId",
+                table: "PageContentGroups",
                 column: "SectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PageContents_ContentGroupId",
+                table: "PageContents",
+                column: "ContentGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pages_ParentId",
@@ -209,6 +235,9 @@ namespace DataAccessLevel.Migrations
 
             migrationBuilder.DropTable(
                 name: "Settings");
+
+            migrationBuilder.DropTable(
+                name: "PageContentGroups");
 
             migrationBuilder.DropTable(
                 name: "PageSections");

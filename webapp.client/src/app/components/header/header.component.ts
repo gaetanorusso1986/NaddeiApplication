@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import { AuthService } from '../../Services/auth.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs'; // Importa Subscription
+import { Subscription } from 'rxjs';
 import { PagesService } from '../../Services/pages.service';
 
 @Component({
@@ -43,7 +43,7 @@ export class HeaderComponent {
   }
 
   login(): void {
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/login']);
   }
 
   logout(): void {

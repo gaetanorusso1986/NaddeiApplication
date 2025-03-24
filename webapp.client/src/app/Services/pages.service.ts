@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-import { Page, PageDto } from '../Dtos/PageDto';
+import { Page, PageDto } from '../Models/pages';
+
 @Injectable({
   providedIn: 'root'
 })

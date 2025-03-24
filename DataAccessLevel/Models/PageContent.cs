@@ -2,14 +2,17 @@
 {
     public class PageContent
     {
-        public Guid Id { get; set; }  // GUID per PageContent ID
-        public Guid SectionId { get; set; }  // Collegato a PageSection
-        public string ContentType { get; set; }  // Enum per tipo di contenuto (text, image, file, video)
-        public string ContentData { get; set; }  // Dati del contenuto
-        public DateTime CreatedAt { get; set; }
+        public Guid Id { get; set; }
+        public Guid ContentGroupId { get; set; }  // Relazione con PageContentGroup
+        public string? ContentType { get; set; }
+        public string? ContentData { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int Order { get; set; }
 
-        // Relazione con PageSection
-        public PageSection PageSection { get; set; }
+        public PageContentGroup PageContentGroup { get; set; }  // Relazione con PageContentGroup
     }
 
+
 }
+
+
